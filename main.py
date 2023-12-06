@@ -22,7 +22,7 @@ cameraPositon = (1.0, 1.0, 1.3)
 lookAt = (0.0, 0.0, 0.0)
 upVector = (0.0, 1.0, 0.0)
 
-f = open("koordinate.txt", "r")
+f = open("palm.obj", "r")
 lines = f.readlines()
 
 ociste = Vrh(1,1,3)
@@ -159,6 +159,7 @@ def pronadi_orijentacije():
         pi = dict()
 
         for t in np.arange(0,1,0.1):
+            t = round(t, 1)
             T = np.array([3*t**2,2*t,1,0])
             pi_t = np.dot(T,B)
             pi_t = np.dot(pi_t, np.array([segment[0].to_arr(),segment[1].to_arr(),segment[2].to_arr(),segment[3].to_arr()]))
@@ -187,6 +188,8 @@ def translacija():
         pi = dict()
 
         for t in np.arange(0, 1, 0.1):
+
+            t = round(t,1)
             T = np.array([t**3, t ** 2, t, 1])
             pi_t = np.dot(T, B)
             pi_t = np.dot(pi_t, np.array([segment[0].to_arr(),segment[1].to_arr(),segment[2].to_arr(),segment[3].to_arr()]))
@@ -201,13 +204,15 @@ def translacija():
 def ticker(a,b):
     global myTime
     global mySeg
-    myTime+=1
 
-    if myTime==1:
+    if round(myTime,1)==0.9:
         myTime=0
-        mySeg+=1
+        mySeg += 1
         if mySeg == len(segmentiPutanje()):
             mySeg = 0
+    else:
+        myTime += 0.1
+
 
 
 @window.event
@@ -219,7 +224,7 @@ def on_draw():
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE)
     glMatrixMode(GL_PROJECTION)
     glLoadIdentity()
-    gluPerspective(70, float(width) / float(height), 0.5, 100)
+    gluPerspective(70, 2, 0.2, 100)
     gluLookAt(cameraPositon[0], cameraPositon[1], cameraPositon[2],
               lookAt[0], lookAt[1], lookAt[2],
               upVector[0], upVector[1], upVector[2])
@@ -239,14 +244,14 @@ def on_draw():
 
             glVertex3f(translacije[i][key][0]/55+orijentacije[i][key][0]/55,
                        translacije[i][key][1]/55+orijentacije[i][key][1]/55,
-                       translacije[i][key][2]/55+orijentacije[i][key][2] / 55
+                       translacije[i][key][2]/55+orijentacije[i][key][2]/55
                        )
 
 
     glEnd()
 
-    os, kut = rotacija([1,0,1], [orijentacije[mySeg][myTime][0],orijentacije[mySeg][myTime][1],orijentacije[mySeg][myTime][2]])
-    glTranslatef(translacije[mySeg][myTime][0]/55,translacije[mySeg][myTime][1]/55,translacije[mySeg][myTime][2]/55)
+    os, kut = rotacija([0,0,1], [orijentacije[mySeg][round(myTime,1)][0],orijentacije[mySeg][round(myTime,1)][1],orijentacije[mySeg][round(myTime,1)][2]])
+    glTranslatef(translacije[mySeg][round(myTime,1)][0]/55,translacije[mySeg][round(myTime,1)][1]/55,translacije[mySeg][round(myTime,1)][2]/55)
     glRotatef(kut, os[0],os[1],os[2])
 
     glBegin(GL_LINES)
